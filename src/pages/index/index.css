@@ -1,0 +1,38 @@
+.hero-image {
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, rgba(13, 110, 253, 0.1) 100%);
+    padding: 3rem;
+    border-radius: 10px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+h1 {
+    color: #212529;
+}
+
+.lead {
+    color: #6c757d;
+    line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+    .hero-image {
+        min-height: 250px;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+    }
+}
