@@ -71,7 +71,7 @@ function getTemplate() {
                 </div>
 
                 <button id="saveEmergencyCalculationBtn" type="button" class="btn btn-primary w-100" disabled>
-                  Save to History
+                  Save calculation
                 </button>
                 <small id="saveEmergencyHint" class="text-muted d-block mt-2"></small>
               </form>
@@ -275,6 +275,9 @@ async function setupEmergencyCalculator(container) {
     saveHint.textContent = 'Saved to history.';
     saveButton.textContent = originalText;
     saveButton.disabled = false;
+
+    window.history.pushState(null, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
   handleRecalculate();

@@ -1,5 +1,7 @@
 import { Chart } from 'chart.js/auto';
+import { getCurrentUser } from '../utils/auth.js';
 import { calculateLoan } from '../utils/loanCalc.js';
+import { fetchCalculatorTypeBySlugs, saveCalculation } from '../utils/database.js';
 
 export const title = 'Loan Calculator';
 
@@ -72,6 +74,11 @@ function getTemplate() {
                 <small class="text-muted d-block">
                   Monthly payment shown excludes extra payment. Extra payments reduce payoff time and interest.
                 </small>
+
+                <button id="saveLoanCalculationBtn" type="button" class="btn btn-primary w-100 mt-3" disabled>
+                  Save calculation
+                </button>
+                <small id="saveLoanHint" class="text-muted d-block mt-2"></small>
               </form>
             </div>
           </div>
@@ -164,7 +171,7 @@ export async function init() {
   const container = document.getElementById('page-container');
   if (!container) return;
 
-  setupLoanCalculator(container);
+  await setupLoanCalculator(container);
 }
 
 export async function unmount() {
@@ -174,7 +181,7 @@ export async function unmount() {
   }
 }
 
-function setupLoanCalculator(container) {
+async function setupLoanCalculator(container) {
   const form = container.querySelector('#loanForm');
   if (!form) return;
 
@@ -183,6 +190,19 @@ function setupLoanCalculator(container) {
   const loanTermYearsInput = container.querySelector('#loanTermYears');
   const startDateInput = container.querySelector('#startDate');
   const extraMonthlyPaymentInput = container.querySelector('#extraMonthlyPayment');
+  const saveButton = container.querySelector('#saveLoanCalculationBtn');
+  const saveHint = container.querySelector('#saveLoanHint');
+
+  const { user } = await getCurrentUser();
+  let calculatorTypeId = null;
+
+  if (user) {
+    const { calculatorType } = await fetchCalculatorTypeBySlugs(['loancalculator', 'loan']);
+    calculatorTypeId = calculatorType?.id || null;
+  }
+
+  let latestInputs = null;
+  let latestResults = null;
 
   const handleRecalculate = () => {
     const values = {
@@ -202,12 +222,32 @@ function setupLoanCalculator(container) {
 
     const isValid = Object.values(validation).every(Boolean);
     if (!isValid) {
+      saveButton.disabled = true;
+      if (!user) {
+        saveHint.textContent = 'Log in to save calculations to history.';
+      } else {
+        saveHint.textContent = 'Fix input errors to enable saving.';
+      }
       return;
     }
 
     const result = calculateLoan(values);
+    latestInputs = values;
+    latestResults = result;
+
     renderSummary(container, result, values);
     updateChart(container, result, values.extraMonthlyPayment > 0);
+
+    const canSave = Boolean(user && calculatorTypeId);
+    saveButton.disabled = !canSave;
+
+    if (!user) {
+      saveHint.textContent = 'Log in to save calculations to history.';
+    } else if (!calculatorTypeId) {
+      saveHint.textContent = 'Calculator type not found; saving is unavailable.';
+    } else {
+      saveHint.textContent = '';
+    }
   };
 
   const watchedFields = [
@@ -221,6 +261,32 @@ function setupLoanCalculator(container) {
   watchedFields.forEach((field) => {
     field.addEventListener('input', handleRecalculate);
     field.addEventListener('change', handleRecalculate);
+  });
+
+  saveButton.addEventListener('click', async () => {
+    if (!user || !calculatorTypeId || !latestInputs || !latestResults) {
+      return;
+    }
+
+    saveButton.disabled = true;
+    const originalText = saveButton.textContent;
+    saveButton.textContent = 'Saving...';
+
+    const { error } = await saveCalculation(user.id, calculatorTypeId, latestInputs, latestResults);
+
+    if (error) {
+      saveHint.textContent = `Save failed: ${error}`;
+      saveButton.textContent = originalText;
+      saveButton.disabled = false;
+      return;
+    }
+
+    saveHint.textContent = 'Saved to history.';
+    saveButton.textContent = originalText;
+    saveButton.disabled = false;
+
+    window.history.pushState(null, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
   handleRecalculate();

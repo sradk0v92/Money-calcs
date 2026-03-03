@@ -1,5 +1,7 @@
 import { Chart } from 'chart.js/auto';
+import { getCurrentUser } from '../utils/auth.js';
 import { calculateInvestment } from '../utils/investmentCalc.js';
+import { fetchCalculatorTypeBySlugs, saveCalculation } from '../utils/database.js';
 
 export const title = 'Investment Calculator';
 
@@ -71,8 +73,9 @@ function getTemplate() {
                 </div>
 
                 <button id="saveCalculationBtn" type="button" class="btn btn-primary w-100" disabled>
-                  Save Calculation
+                  Save calculation
                 </button>
+                <small id="saveCalculationHint" class="text-muted d-block mt-2"></small>
               </form>
             </div>
           </div>
@@ -141,7 +144,7 @@ export async function init() {
   const container = document.getElementById('page-container');
   if (!container) return;
 
-  setupCalculator(container);
+  await setupCalculator(container);
 }
 
 export async function unmount() {
@@ -151,7 +154,7 @@ export async function unmount() {
   }
 }
 
-function setupCalculator(container) {
+async function setupCalculator(container) {
   const form = container.querySelector('#investmentForm');
   if (!form) return;
 
@@ -164,6 +167,18 @@ function setupCalculator(container) {
   const inflationRateInput = container.querySelector('#inflationRate');
   const inflationRateWrap = container.querySelector('#inflationRateWrap');
   const saveButton = container.querySelector('#saveCalculationBtn');
+  const saveHint = container.querySelector('#saveCalculationHint');
+
+  const { user } = await getCurrentUser();
+  let calculatorTypeId = null;
+
+  if (user) {
+    const { calculatorType } = await fetchCalculatorTypeBySlugs(['investmentcalculator', 'investment']);
+    calculatorTypeId = calculatorType?.id || null;
+  }
+
+  let latestInputs = null;
+  let latestResults = null;
 
   const handleRecalculate = () => {
     const values = {
@@ -187,15 +202,34 @@ function setupCalculator(container) {
     setInputValidationState(inflationRateInput, validation.inflationRate, values.inflationEnabled);
 
     const isValid = Object.values(validation).every(Boolean);
-    saveButton.disabled = !isValid;
 
     if (!isValid) {
+      saveButton.disabled = true;
+      if (!user) {
+        saveHint.textContent = 'Log in to save calculations to history.';
+      } else {
+        saveHint.textContent = 'Fix input errors to enable saving.';
+      }
       return;
     }
 
     const result = calculateInvestment(values);
+    latestInputs = values;
+    latestResults = result;
+
     renderSummary(container, result, values.inflationEnabled);
     updateChart(container, result);
+
+    const canSave = Boolean(user && calculatorTypeId);
+    saveButton.disabled = !canSave;
+
+    if (!user) {
+      saveHint.textContent = 'Log in to save calculations to history.';
+    } else if (!calculatorTypeId) {
+      saveHint.textContent = 'Calculator type not found; saving is unavailable.';
+    } else {
+      saveHint.textContent = '';
+    }
   };
 
   const watchedFields = [
@@ -213,8 +247,30 @@ function setupCalculator(container) {
     field.addEventListener('change', handleRecalculate);
   });
 
-  saveButton.addEventListener('click', () => {
-    saveButton.blur();
+  saveButton.addEventListener('click', async () => {
+    if (!user || !calculatorTypeId || !latestInputs || !latestResults) {
+      return;
+    }
+
+    saveButton.disabled = true;
+    const originalText = saveButton.textContent;
+    saveButton.textContent = 'Saving...';
+
+    const { error } = await saveCalculation(user.id, calculatorTypeId, latestInputs, latestResults);
+
+    if (error) {
+      saveHint.textContent = `Save failed: ${error}`;
+      saveButton.textContent = originalText;
+      saveButton.disabled = false;
+      return;
+    }
+
+    saveHint.textContent = 'Saved to history.';
+    saveButton.textContent = originalText;
+    saveButton.disabled = false;
+
+    window.history.pushState(null, '', '/dashboard');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
   handleRecalculate();
