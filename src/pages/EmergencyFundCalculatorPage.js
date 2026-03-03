@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js/auto';
 import { getCurrentUser } from '../utils/auth.js';
 import { calculateEmergencyFund } from '../utils/emergencyFundCalc.js';
+import { buildCalculationSummary, buildCalculationTitle } from '../utils/calculationSummary.js';
 import { fetchCalculatorTypeBySlugs, saveCalculation } from '../utils/database.js';
 
 export const title = 'Emergency Fund Calculator';
@@ -263,7 +264,17 @@ async function setupEmergencyCalculator(container) {
     const originalText = saveButton.textContent;
     saveButton.textContent = 'Saving...';
 
-    const { error } = await saveCalculation(user.id, calculatorTypeId, latestInputs, latestResults);
+    const title = buildCalculationTitle('Emergency fund calculation');
+    const summary = buildCalculationSummary('emergency_fund', latestResults);
+
+    const { error } = await saveCalculation({
+      userId: user.id,
+      calculatorTypeId,
+      inputs: latestInputs,
+      results: latestResults,
+      title,
+      summary,
+    });
 
     if (error) {
       saveHint.textContent = `Save failed: ${error}`;

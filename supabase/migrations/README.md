@@ -81,6 +81,30 @@ Enables Row Level Security (RLS) and creates security policies.
 - **INSERT**: Any authenticated user can create
 - **DELETE**: Users can delete their own, admins can delete all
 
+### 6. `006_add_calculation_summary_columns.sql`
+Extends the `calculations` table for cleaner history UI and easier filtering.
+
+**Added columns on calculations:**
+- `title` (text, nullable) - Friendly saved calculation title
+- `summary` (jsonb, nullable) - Compact summary values for list cards
+- `scenario_id` (UUID, FK, nullable) - Optional link to `scenarios(id)`
+- `updated_at` (timestamp) - Last updated timestamp
+
+**Additional improvements:**
+- Trigger keeps `updated_at` current on row updates
+- Indexes added for `created_at desc`, `scenario_id`, and GIN on `summary`
+
+### 7. `007_add_calculations_update_policy.sql`
+Adds/refreshes RLS update policy for `calculations`.
+
+**Policy behavior:**
+- Users can update only their own calculations
+- Admins can update all calculations
+- `WITH CHECK` keeps ownership restricted to `auth.uid()` for normal users
+
+### 8. `008_remove_calculations_update_policy.sql`
+Removes calculations `UPDATE` policy to disable editing saved calculation records.
+
 #### Scenarios Table
 - **SELECT**: Users see their own, admins see all
 - **INSERT**: Any authenticated user can create

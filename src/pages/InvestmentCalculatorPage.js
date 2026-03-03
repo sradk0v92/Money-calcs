@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js/auto';
 import { getCurrentUser } from '../utils/auth.js';
 import { calculateInvestment } from '../utils/investmentCalc.js';
+import { buildCalculationSummary, buildCalculationTitle } from '../utils/calculationSummary.js';
 import { fetchCalculatorTypeBySlugs, saveCalculation } from '../utils/database.js';
 
 export const title = 'Investment Calculator';
@@ -256,7 +257,17 @@ async function setupCalculator(container) {
     const originalText = saveButton.textContent;
     saveButton.textContent = 'Saving...';
 
-    const { error } = await saveCalculation(user.id, calculatorTypeId, latestInputs, latestResults);
+    const title = buildCalculationTitle('Investment calculation');
+    const summary = buildCalculationSummary('investment', latestResults);
+
+    const { error } = await saveCalculation({
+      userId: user.id,
+      calculatorTypeId,
+      inputs: latestInputs,
+      results: latestResults,
+      title,
+      summary,
+    });
 
     if (error) {
       saveHint.textContent = `Save failed: ${error}`;

@@ -71,9 +71,9 @@ export async function fetchUserCalculations(userId, limit = 5) {
       .from('calculations')
       .select(`
         id,
+        title,
+        summary,
         calculator_type_id,
-        inputs,
-        results,
         created_at,
         calculator_types(name, slug)
       `)
@@ -102,10 +102,14 @@ export async function fetchCalculation(calculationId) {
       .from('calculations')
       .select(`
         id,
+        title,
+        summary,
+        scenario_id,
         calculator_type_id,
         inputs,
         results,
         created_at,
+        updated_at,
         calculator_types(name, slug)
       `)
       .eq('id', calculationId)
@@ -123,21 +127,35 @@ export async function fetchCalculation(calculationId) {
 
 /**
  * Save a new calculation
- * @param {string} userId - User ID
- * @param {string} calculatorTypeId - Calculator type ID
- * @param {object} inputs - Input parameters
- * @param {object} results - Calculation results
+ * @param {object|string} payloadOrUserId - Payload object or user ID for backwards compatibility
+ * @param {string} calculatorTypeIdArg - Calculator type ID (legacy signature)
+ * @param {object} inputsArg - Input parameters (legacy signature)
+ * @param {object} resultsArg - Calculation results (legacy signature)
+ * @param {object} optionsArg - Optional fields (legacy signature)
  * @returns {Promise<{calculation, error}>}
  */
-export async function saveCalculation(userId, calculatorTypeId, inputs, results) {
+export async function saveCalculation(payloadOrUserId, calculatorTypeIdArg, inputsArg, resultsArg, optionsArg = {}) {
+  const payload = typeof payloadOrUserId === 'object' && payloadOrUserId !== null
+    ? payloadOrUserId
+    : {
+      userId: payloadOrUserId,
+      calculatorTypeId: calculatorTypeIdArg,
+      inputs: inputsArg,
+      results: resultsArg,
+      ...optionsArg,
+    };
+
   try {
     const { data, error } = await supabase
       .from('calculations')
       .insert({
-        user_id: userId,
-        calculator_type_id: calculatorTypeId,
-        inputs,
-        results,
+        user_id: payload.userId,
+        calculator_type_id: payload.calculatorTypeId,
+        inputs: payload.inputs,
+        results: payload.results,
+        title: payload.title ?? null,
+        summary: payload.summary ?? null,
+        scenario_id: payload.scenarioId ?? null,
       })
       .select()
       .single();
@@ -149,6 +167,38 @@ export async function saveCalculation(userId, calculatorTypeId, inputs, results)
     return { calculation: data, error: null };
   } catch (error) {
     return { calculation: null, error: error.message };
+  }
+}
+
+/**
+ * Fetch user history rows optimized for list view.
+ * @param {string} userId - User ID
+ * @param {number} limit - Number of rows to fetch
+ * @returns {Promise<{calculations, error}>}
+ */
+export async function fetchCalculationHistory(userId, limit = 20) {
+  return fetchUserCalculations(userId, limit);
+}
+
+/**
+ * Delete calculation by id
+ * @param {string} calculationId - Calculation ID
+ * @returns {Promise<{error}>}
+ */
+export async function deleteCalculation(calculationId) {
+  try {
+    const { error } = await supabase
+      .from('calculations')
+      .delete()
+      .eq('id', calculationId);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { error: null };
+  } catch (error) {
+    return { error: error.message };
   }
 }
 

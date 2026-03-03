@@ -1,10 +1,12 @@
 import dashboardHTML from './dashboard.html?raw';
 import './dashboard.css';
 import { isAuthenticated, getCurrentUser } from '../../utils/auth.js';
+import { formatDate, summaryEntries } from '../../utils/calculationPresentation.js';
 import { 
+  deleteCalculation,
   fetchCalculatorTypes, 
   fetchUserCalculations, 
-  fetchUserScenarios 
+  fetchUserScenarios,
 } from '../../utils/database.js';
 
 export const title = 'Dashboard';
@@ -111,25 +113,32 @@ async function renderRecentCalculations(userId) {
 
   const calculationsList = calculations.map(calc => {
     const calculatorName = calc.calculator_types?.name || 'Unknown Calculator';
-    const date = new Date(calc.created_at).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const date = formatDate(calc.created_at);
+    const itemTitle = calc.title || 'Untitled calculation';
+    const summary = summaryEntries(calc.summary, calc.calculator_types?.slug);
+
+    const summaryHtml = summary.length > 0
+      ? `<div class="summary-list mt-2">${summary.map((item) => `<span class="summary-pill"><strong>${item.label}:</strong> ${item.value}</span>`).join('')}</div>`
+      : '<small class="text-muted d-block mt-2">No summary available.</small>';
 
     return `
       <div class="calculation-item border-bottom py-3">
         <div class="row align-items-center">
           <div class="col">
             <h6 class="mb-1 fw-bold">${calculatorName}</h6>
-            <small class="text-muted">${date}</small>
+            <div class="small text-muted">${date}</div>
+            <div class="small">${itemTitle}</div>
+            ${summaryHtml}
           </div>
           <div class="col-auto">
-            <a href="/calculations/${calc.id}" data-route="/calculations/${calc.id}" class="btn btn-sm btn-outline-primary">
-              View Details
-            </a>
+            <div class="d-flex gap-2 recent-actions">
+              <a href="/calculations/${calc.id}" data-route="/calculations/${calc.id}" class="btn btn-sm btn-outline-primary">
+              View details
+              </a>
+              <button type="button" class="btn btn-sm btn-outline-danger js-delete-calc" data-id="${calc.id}" aria-label="Delete calculation">
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -137,6 +146,31 @@ async function renderRecentCalculations(userId) {
   }).join('');
 
   container.innerHTML = `<div class="calculations-list">${calculationsList}</div>`;
+  setupRecentCalculationActions(userId);
+}
+
+function setupRecentCalculationActions(userId) {
+  const container = document.getElementById('calculationsContainer');
+  if (!container) return;
+
+  container.querySelectorAll('.js-delete-calc').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const calculationId = button.dataset.id;
+      const shouldDelete = confirm('Are you sure you want to delete this calculation?');
+      if (!shouldDelete) return;
+
+      button.disabled = true;
+      const { error } = await deleteCalculation(calculationId);
+      button.disabled = false;
+
+      if (error) {
+        alert(`Failed to delete calculation: ${error}`);
+        return;
+      }
+
+      await renderRecentCalculations(userId);
+    });
+  });
 }
 
 /**

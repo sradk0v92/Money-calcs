@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js/auto';
 import { getCurrentUser } from '../utils/auth.js';
 import { calculateLoan } from '../utils/loanCalc.js';
+import { buildCalculationSummary, buildCalculationTitle } from '../utils/calculationSummary.js';
 import { fetchCalculatorTypeBySlugs, saveCalculation } from '../utils/database.js';
 
 export const title = 'Loan Calculator';
@@ -272,7 +273,17 @@ async function setupLoanCalculator(container) {
     const originalText = saveButton.textContent;
     saveButton.textContent = 'Saving...';
 
-    const { error } = await saveCalculation(user.id, calculatorTypeId, latestInputs, latestResults);
+    const title = buildCalculationTitle('Loan calculation');
+    const summary = buildCalculationSummary('loan', latestResults);
+
+    const { error } = await saveCalculation({
+      userId: user.id,
+      calculatorTypeId,
+      inputs: latestInputs,
+      results: latestResults,
+      title,
+      summary,
+    });
 
     if (error) {
       saveHint.textContent = `Save failed: ${error}`;

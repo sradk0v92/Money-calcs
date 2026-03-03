@@ -1,64 +1,49 @@
-/* Calculation Detail Page Styles */
-
-#calculationContent {
-    background-color: #fff;
-    border-radius: 0.375rem;
-    padding: 2rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+.detail-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
 }
 
-.calculation-inputs,
-.calculation-results {
-    margin-bottom: 2rem;
+.summary-pill {
+    display: inline-block;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 0.75rem;
 }
 
-.calculation-inputs h5,
-.calculation-results h5 {
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
+.kv-list {
+    border-top: 1px solid #e9ecef;
 }
 
-.calculation-input-row,
-.calculation-result-row {
+.kv-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
+    gap: 1rem;
+    padding: 0.65rem 0;
     border-bottom: 1px solid #e9ecef;
 }
 
-.calculation-input-row:last-child,
-.calculation-result-row:last-child {
-    border-bottom: none;
-}
-
-.calculation-label {
-    font-weight: 500;
+.kv-label {
     color: #495057;
-}
-
-.calculation-value {
-    font-family: monospace;
-    color: #212529;
     font-weight: 500;
 }
 
-.calculation-meta {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 0.375rem;
-    margin-bottom: 2rem;
+.kv-value {
+    color: #212529;
+    font-weight: 600;
+    text-align: right;
 }
 
-.calculation-meta small {
-    display: block;
-    margin-bottom: 0.5rem;
+.detail-chart-wrap {
+    height: 320px;
 }
 
 @media (max-width: 768px) {
-    #calculationContent {
-        padding: 1rem;
+    .detail-chart-wrap {
+        height: 260px;
     }
 }

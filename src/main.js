@@ -16,6 +16,7 @@ import * as indexPage from './pages/index/index.js';
 import * as dashboardPage from './pages/dashboard/dashboard.js';
 import * as loginPage from './pages/login/index.js';
 import * as registerPage from './pages/register/index.js';
+import * as historyPage from './pages/history/index.js';
 import * as investmentCalculatorPage from './pages/InvestmentCalculatorPage.js';
 import * as emergencyFundCalculatorPage from './pages/EmergencyFundCalculatorPage.js';
 import * as loanCalculatorPage from './pages/LoanCalculatorPage.js';
@@ -71,6 +72,7 @@ function registerRoutes() {
     
     // Dashboard page
     router.register('/dashboard', dashboardPage);
+    router.register('/history', historyPage);
 
     // Authentication pages
     router.register('/login', loginPage);
