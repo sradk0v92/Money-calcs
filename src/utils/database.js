@@ -28,6 +28,38 @@ export async function fetchCalculatorTypes() {
 }
 
 /**
+ * Fetch a single calculator type using preferred slug order
+ * @param {string[]} slugs - Preferred slugs in priority order
+ * @returns {Promise<{calculatorType, error}>}
+ */
+export async function fetchCalculatorTypeBySlugs(slugs = []) {
+  if (!Array.isArray(slugs) || slugs.length === 0) {
+    return { calculatorType: null, error: 'No slugs provided' };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('calculator_types')
+      .select('id, slug, name, is_active')
+      .in('slug', slugs)
+      .eq('is_active', true);
+
+    if (error) {
+      return { calculatorType: null, error: error.message };
+    }
+
+    if (!data || data.length === 0) {
+      return { calculatorType: null, error: null };
+    }
+
+    const sorted = [...data].sort((a, b) => slugs.indexOf(a.slug) - slugs.indexOf(b.slug));
+    return { calculatorType: sorted[0], error: null };
+  } catch (error) {
+    return { calculatorType: null, error: error.message };
+  }
+}
+
+/**
  * Fetch user's recent calculations
  * @param {string} userId - User ID
  * @param {number} limit - Number of results to fetch (default 5)

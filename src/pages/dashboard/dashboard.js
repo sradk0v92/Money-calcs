@@ -61,6 +61,8 @@ async function renderCalculators() {
 
     const routeMap = {
       investment: '/investmentcalculator',
+      emergency_fund: '/emergencyfundcalculator',
+      emergencyfundcalculator: '/emergencyfundcalculator',
     };
     
     const icon = iconMap[calc.slug] || '📊';
