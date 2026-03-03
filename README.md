@@ -76,7 +76,6 @@ Future routes (to be implemented):
 - `/register` - User registration page
 - `/calculators/:id/investmentcalculator` - Investment calculator
 - `/calculators/:id/loancalculator` - Loan calculator
-- `/calculators/:id/debtpayoffcalculator` - Debt payoff calculator
 - `/calculators/:id/emergencyfundcalculator` - Emergency fund calculator
 
 ## Configuration

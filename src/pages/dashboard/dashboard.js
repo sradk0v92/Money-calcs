@@ -55,8 +55,7 @@ async function renderCalculators() {
     const iconMap = {
       'investment': '💹',
       'loan': '🏦',
-      'emergency_fund': '🏠',
-      'debt_payoff': '💳'
+      'emergency_fund': '🏠'
     };
 
     const routeMap = {

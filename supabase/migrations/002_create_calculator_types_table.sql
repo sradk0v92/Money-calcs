@@ -11,7 +11,7 @@ CREATE TABLE calculator_types (
 
 COMMENT ON TABLE calculator_types IS 'Available calculator types in the application';
 COMMENT ON COLUMN calculator_types.id IS 'Unique identifier for calculator type';
-COMMENT ON COLUMN calculator_types.slug IS 'URL-friendly identifier (e.g., investment, emergency_fund, loan, debt_payoff)';
+COMMENT ON COLUMN calculator_types.slug IS 'URL-friendly identifier (e.g., investment, emergency_fund, loan)';
 COMMENT ON COLUMN calculator_types.name IS 'Display name of the calculator (e.g., Investment Calculator)';
 COMMENT ON COLUMN calculator_types.description IS 'Brief description of what the calculator does';
 COMMENT ON COLUMN calculator_types.is_active IS 'Whether this calculator is available to users';
@@ -20,5 +20,4 @@ COMMENT ON COLUMN calculator_types.is_active IS 'Whether this calculator is avai
 INSERT INTO calculator_types (slug, name, description, is_active) VALUES
   ('investment', 'Investment Calculator', 'Calculate investment returns and compound interest', true),
   ('emergency_fund', 'Emergency Fund Calculator', 'Determine how much you need in an emergency fund', true),
-  ('loan', 'Loan Calculator', 'Calculate loan payments, total interest, and amortization', true),
-  ('debt_payoff', 'Debt Payoff Calculator', 'Plan your debt payoff strategy', true);
+  ('loan', 'Loan Calculator', 'Calculate loan payments, total interest, and amortization', true);

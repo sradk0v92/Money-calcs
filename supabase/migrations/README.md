@@ -19,16 +19,15 @@ Creates the `calculator_types` table to store available calculator types.
 
 **Table: calculator_types**
 - `id` (UUID, PK) - Unique calculator type identifier
-- `slug` (text, unique) - URL-friendly identifier (investment, emergency_fund, loan, debt_payoff)
+- `slug` (text, unique) - URL-friendly identifier (investment, emergency_fund, loan)
 - `name` (text) - Display name
 - `description` (text) - Description of the calculator
 - `is_active` (boolean) - Whether the calculator is available
 
-Initializes with 4 calculator types:
+Initializes with 3 calculator types:
 - Investment Calculator
 - Emergency Fund Calculator
 - Loan Calculator
-- Debt Payoff Calculator
 
 ### 3. `003_create_calculations_table.sql`
 Creates the `calculations` table to store calculation history.

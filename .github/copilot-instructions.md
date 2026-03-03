@@ -29,7 +29,7 @@ Use a modular code structure, with separate files for different components, page
   -  Split the app into multiple pages: login, registration, calculator, and history, admin panel, etc.
   -  Implement pages as reusable components (HTML, CSS, JS code).
   -  Use routing to navigate between pages. 
-  -  Use full URLs like: /, /login, /register, /investmentcalculator, /emergencyfundcalculator, /loancalculator, /debtpayoffcalculator, /history, /admin, etc.
+  -  Use full URLs like: /, /login, /register, /investmentcalculator, /emergencyfundcalculator, /loancalculator, /history, /admin, etc.
 
 ## Backend and Database
   -  Use Supabase as the backend services and database for the app.

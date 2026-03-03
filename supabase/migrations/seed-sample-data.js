@@ -40,17 +40,6 @@ const CALCULATOR_GOAL_BLUEPRINTS = {
       term_months: 12 + index * 6,
       annual_interest_percent: 5.5 + (index % 5) * 0.4
     })
-  },
-  debt_payoff: {
-    titlePrefix: 'Debt payoff goal',
-    amountStart: 1200,
-    amountStep: 400,
-    details: (index) => ({
-      debt_type: index % 2 === 0 ? 'credit_card' : 'personal_loan',
-      current_balance: 1200 + index * 400,
-      monthly_payment: 120 + index * 15,
-      annual_interest_percent: 12 - (index % 4)
-    })
   }
 };
 
@@ -261,14 +250,14 @@ async function runWithServiceRole(supabaseUrl, serviceRoleKey) {
   const { data: calculatorTypes, error: calculatorTypesError } = await adminClient
     .from('calculator_types')
     .select('id, slug')
-    .in('slug', ['investment', 'emergency_fund', 'loan', 'debt_payoff']);
+    .in('slug', ['investment', 'emergency_fund', 'loan']);
 
   if (calculatorTypesError) {
     throw new Error(`Failed loading calculator types: ${calculatorTypesError.message}`);
   }
 
   const calculatorTypesBySlug = Object.fromEntries((calculatorTypes ?? []).map((row) => [row.slug, row.id]));
-  const requiredSlugs = ['investment', 'emergency_fund', 'loan', 'debt_payoff'];
+  const requiredSlugs = ['investment', 'emergency_fund', 'loan'];
   const missingSlugs = requiredSlugs.filter((slug) => !calculatorTypesBySlug[slug]);
   if (missingSlugs.length > 0) {
     throw new Error(`Missing calculator types: ${missingSlugs.join(', ')}`);
@@ -340,14 +329,14 @@ async function runWithPublishableKey(supabaseUrl, publishableKey) {
   const { data: calculatorTypes, error: calculatorTypesError } = await adminLikeClient
     .from('calculator_types')
     .select('id, slug')
-    .in('slug', ['investment', 'emergency_fund', 'loan', 'debt_payoff']);
+    .in('slug', ['investment', 'emergency_fund', 'loan']);
 
   if (calculatorTypesError) {
     throw new Error(`Failed loading calculator types: ${calculatorTypesError.message}`);
   }
 
   const calculatorTypesBySlug = Object.fromEntries((calculatorTypes ?? []).map((row) => [row.slug, row.id]));
-  const requiredSlugs = ['investment', 'emergency_fund', 'loan', 'debt_payoff'];
+  const requiredSlugs = ['investment', 'emergency_fund', 'loan'];
   const missingSlugs = requiredSlugs.filter((slug) => !calculatorTypesBySlug[slug]);
   if (missingSlugs.length > 0) {
     throw new Error(`Missing calculator types: ${missingSlugs.join(', ')}`);

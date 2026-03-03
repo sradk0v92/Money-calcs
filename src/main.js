@@ -93,7 +93,6 @@ function registerRoutes() {
     // router.register('/register', registerPage);
     // router.register('/calculators/:id/investmentcalculator', investmentCalculatorPage);
     // router.register('/calculators/:id/loancalculator', loanCalculatorPage);
-    // router.register('/calculators/:id/debtpayoffcalculator', debtPayoffCalculatorPage);
     // router.register('/calculators/:id/emergencyfundcalculator', emergencyFundCalculatorPage);
 }
 
