@@ -6,7 +6,7 @@ class Router {
   constructor() {
     this.routes = new Map();
     this.currentPage = null;
-    this.init();
+    this.isInitialized = false;
   }
 
   register(path, component) {
@@ -14,8 +14,11 @@ class Router {
   }
 
   init() {
+    if (this.isInitialized) return;
+    this.isInitialized = true;
+
     // Handle initial page load
-    window.addEventListener('popstate', () => this.navigate(window.location.pathname));
+    window.addEventListener('popstate', () => this.navigate(window.location.pathname, { pushState: false }));
     
     // Handle link clicks
     document.addEventListener('click', (e) => {
@@ -28,10 +31,12 @@ class Router {
     });
 
     // Navigate to initial path
-    this.navigate(window.location.pathname);
+    this.navigate(window.location.pathname, { pushState: false });
   }
 
-  async navigate(path) {
+  async navigate(path, options = {}) {
+    const { pushState = true } = options;
+
     // Normalize path
     if (!path.startsWith('/')) path = '/' + path;
 
@@ -43,7 +48,9 @@ class Router {
     }
 
     // Update browser history
-    window.history.pushState(null, '', path);
+    if (pushState && window.location.pathname !== path) {
+      window.history.pushState(null, '', path);
+    }
     
     // Load and render the page
     await this.renderPage(route);
@@ -79,6 +86,8 @@ class Router {
       if (component.init) {
         await component.init();
       }
+
+      window.dispatchEvent(new CustomEvent('spa-page-changed', { detail: { path: window.location.pathname } }));
 
       // Scroll to top
       window.scrollTo(0, 0);

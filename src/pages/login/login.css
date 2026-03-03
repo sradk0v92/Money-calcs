@@ -1,0 +1,43 @@
+/* Login Page Styles */
+
+#loginForm {
+    margin-top: 1rem;
+}
+
+#loginForm input {
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+
+#loginForm input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.card-body {
+    background-color: #fff;
+}
+
+#alertContainer {
+    margin-bottom: 1rem;
+}
+
+.alert {
+    border-radius: 0.375rem;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+}

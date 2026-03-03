@@ -13,6 +13,8 @@ import * as footer from './components/footer/index.js';
 // Import pages
 import * as indexPage from './pages/index/index.js';
 import * as dashboardPage from './pages/dashboard/dashboard.js';
+import * as loginPage from './pages/login/index.js';
+import * as registerPage from './pages/register/index.js';
 
 /**
  * Initialize the application
@@ -62,6 +64,10 @@ function registerRoutes() {
     
     // Dashboard page
     router.register('/dashboard', dashboardPage);
+
+    // Authentication pages
+    router.register('/login', loginPage);
+    router.register('/register', registerPage);
 
     // TODO: Add additional route pages
     // router.register('/login', loginPage);

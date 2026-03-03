@@ -1,9 +1,16 @@
 import dashboardHTML from './dashboard.html?raw';
 import './dashboard.css';
+import { isAuthenticated } from '../../utils/auth.js';
 
 export const title = 'Dashboard';
 
 export async function render() {
+  if (!(await isAuthenticated())) {
+    window.history.pushState(null, '', '/login');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    return '';
+  }
+
   return dashboardHTML;
 }
 

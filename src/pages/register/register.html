@@ -1,0 +1,49 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4">Register</h2>
+                    
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Create a password">
+                            <small class="text-muted d-block mt-2">Password must be at least 6 characters</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                        </div>
+
+                        <div id="alertContainer"></div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Register</button>
+                    </form>
+
+                    <div class="text-center">
+                        <p>Already have an account? 
+                            <a href="/login" data-route="/login">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -90,11 +90,11 @@ The `vite.config.js` file includes:
 
 ### Environment Variables
 
-Create a `.env.local` file for environment-specific settings:
+Create a `.env` (or `.env.local`) file for environment-specific settings:
 
 ```
-VITE_API_URL=your_supabase_url
-VITE_API_KEY=your_supabase_key
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_or_publishable_key
 ```
 
 ## Architecture

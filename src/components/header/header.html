@@ -11,13 +11,31 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/" data-route="/">Home</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" id="dashboardLink" style="display: none;">
                     <a class="nav-link" href="/dashboard" data-route="/dashboard">Dashboard</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" id="loginLink">
                     <a class="nav-link" href="/login" data-route="/login">Login</a>
+                </li>
+                <li class="nav-item" id="registerLink">
+                    <a class="nav-link" href="/register" data-route="/register">Register</a>
+                </li>
+                <li class="nav-item dropdown" id="userDropdown" style="display: none;">
+                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span id="userEmail">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li>
+                            <a class="dropdown-item" href="/dashboard" data-route="/dashboard">Dashboard</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item" id="logoutBtn">Logout</button>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
     </div>
 </header>
+
