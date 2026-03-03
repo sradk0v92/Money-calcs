@@ -61,6 +61,8 @@ async function renderCalculators() {
 
     const routeMap = {
       investment: '/investmentcalculator',
+      loan: '/loancalculator',
+      loancalculator: '/loancalculator',
       emergency_fund: '/emergencyfundcalculator',
       emergencyfundcalculator: '/emergencyfundcalculator',
     };

@@ -18,6 +18,7 @@ import * as loginPage from './pages/login/index.js';
 import * as registerPage from './pages/register/index.js';
 import * as investmentCalculatorPage from './pages/InvestmentCalculatorPage.js';
 import * as emergencyFundCalculatorPage from './pages/EmergencyFundCalculatorPage.js';
+import * as loanCalculatorPage from './pages/LoanCalculatorPage.js';
 import * as calculationDetailPage from './pages/calculation-detail/index.js';
 import * as scenarioDetailPage from './pages/scenario-detail/index.js';
 import * as notFoundPage from './pages/not-found/index.js';
@@ -78,6 +79,7 @@ function registerRoutes() {
     // Calculator pages
     router.register('/investmentcalculator', investmentCalculatorPage);
     router.register('/emergencyfundcalculator', emergencyFundCalculatorPage);
+    router.register('/loancalculator', loanCalculatorPage);
 
     // Dynamic routes for calculations and scenarios
     router.register('/calculations/:id', calculationDetailPage);
