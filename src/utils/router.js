@@ -104,6 +104,10 @@ class Router {
     }
 
     try {
+      if (this.currentPage && typeof this.currentPage.unmount === 'function') {
+        await this.currentPage.unmount();
+      }
+
       // Clear previous content
       pageContainer.innerHTML = '';
       
@@ -125,6 +129,8 @@ class Router {
       if (component.init) {
         await component.init();
       }
+
+      this.currentPage = component;
 
       window.dispatchEvent(new CustomEvent('spa-page-changed', { detail: { path: window.location.pathname } }));
 

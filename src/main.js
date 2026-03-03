@@ -5,6 +5,7 @@
 
 import router from './utils/router.js';
 import './styles/main.css';
+import './styles/app.css';
 
 // Import components
 import * as header from './components/header/index.js';
@@ -15,6 +16,7 @@ import * as indexPage from './pages/index/index.js';
 import * as dashboardPage from './pages/dashboard/dashboard.js';
 import * as loginPage from './pages/login/index.js';
 import * as registerPage from './pages/register/index.js';
+import * as investmentCalculatorPage from './pages/InvestmentCalculatorPage.js';
 import * as calculationDetailPage from './pages/calculation-detail/index.js';
 import * as scenarioDetailPage from './pages/scenario-detail/index.js';
 import * as notFoundPage from './pages/not-found/index.js';
@@ -71,6 +73,9 @@ function registerRoutes() {
     // Authentication pages
     router.register('/login', loginPage);
     router.register('/register', registerPage);
+
+    // Calculator pages
+    router.register('/investmentcalculator', investmentCalculatorPage);
 
     // Dynamic routes for calculations and scenarios
     router.register('/calculations/:id', calculationDetailPage);

@@ -58,8 +58,13 @@ async function renderCalculators() {
       'emergency_fund': '🏠',
       'debt_payoff': '💳'
     };
+
+    const routeMap = {
+      investment: '/investmentcalculator',
+    };
     
     const icon = iconMap[calc.slug] || '📊';
+    const route = routeMap[calc.slug] || '/dashboard';
     
     return `
       <div class="col-md-6 col-lg-4">
@@ -68,7 +73,7 @@ async function renderCalculators() {
             <div class="display-5 mb-3">${icon}</div>
             <h5 class="card-title">${calc.name}</h5>
             <p class="card-text text-muted small">${calc.description || ''}</p>
-            <a href="/calculator/${calc.id}" data-route="/calculator/${calc.id}" class="btn btn-sm btn-primary">
+            <a href="${route}" data-route="${route}" class="btn btn-sm btn-primary">
               Open Calculator
             </a>
           </div>

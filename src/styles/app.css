@@ -1,0 +1,21 @@
+/* App-level page styles */
+
+.investment-calculator-page .card {
+  border: 0;
+}
+
+.investment-calculator-page .chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+
+.investment-calculator-page .form-label {
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .investment-calculator-page .chart-wrap {
+    height: 260px;
+  }
+}
