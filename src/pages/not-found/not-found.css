@@ -1,0 +1,45 @@
+/* 404 Not Found Page Styles */
+
+.error-container {
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.03) 0%, rgba(13, 110, 253, 0.03) 100%);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(220, 53, 69, 0.1);
+}
+
+.error-container h1 {
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.error-container h2 {
+    color: #495057;
+    font-weight: 600;
+}
+
+.error-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 576px) {
+    .error-container {
+        padding: 2rem 1rem;
+    }
+
+    .error-container h1 {
+        font-size: 4rem;
+    }
+
+    .error-container h2 {
+        font-size: 1.75rem;
+    }
+
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+
+    .btn-lg {
+        width: 100%;
+    }
+}

@@ -21,7 +21,38 @@
     border-top: 1px solid #dee2e6;
 }
 
+.calculation-item,
+.scenario-item {
+    transition: background-color 0.2s ease;
+}
+
+.calculation-item:hover,
+.scenario-item:hover {
+    background-color: rgba(13, 110, 253, 0.02);
+}
+
+.calculations-list,
+.scenarios-list {
+    background-color: #fff;
+    border-radius: 0.375rem;
+}
+
+.calculation-item:first-child,
+.scenario-item:first-child {
+    padding-top: 0;
+}
+
+.calculation-item:last-child,
+.scenario-item:last-child {
+    border-bottom: none;
+}
+
 h1 {
+    color: #212529;
+    font-weight: 700;
+}
+
+h2 {
     color: #212529;
     font-weight: 700;
 }

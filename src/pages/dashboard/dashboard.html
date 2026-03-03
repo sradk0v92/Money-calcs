@@ -1,69 +1,56 @@
 <div class="container py-5">
     <div class="row">
         <div class="col">
-            <h1 class="mb-4">Dashboard</h1>
-            <p class="text-muted mb-5">Welcome to your financial dashboard. Select a calculator below to get started.</p>
+            <h1 class="mb-2">Dashboard</h1>
+            <p class="text-muted mb-5">Welcome to your financial dashboard. Choose a calculator or view your calculation history.</p>
         </div>
     </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-6 col-lg-4">
-            <div class="calculator-card card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="display-5 mb-3">💹</div>
-                    <h5 class="card-title">Investment Calculator</h5>
-                    <p class="card-text">Calculate your investment returns and see how your money grows over time.</p>
-                    <a href="#" data-route="/calculators/123/investmentcalculator" class="btn btn-sm btn-primary">
-                        Open Calculator
-                    </a>
-                </div>
+    <!-- Available Calculators Section -->
+    <section class="mb-5">
+        <h2 class="mb-4">Available Calculators</h2>
+        <div id="calculatorsContainer" class="row g-4 mb-5">
+            <div class="text-center text-muted py-4">Loading calculators...</div>
+        </div>
+    </section>
+
+    <hr class="my-5">
+
+    <!-- Recent Calculations Section -->
+    <section class="mb-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="mb-0">Recent Calculations</h2>
+            </div>
+            <div class="col-auto">
+                <a href="#" class="link-primary text-decoration-none">View All</a>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="calculator-card card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="display-5 mb-3">🏦</div>
-                    <h5 class="card-title">Loan Calculator</h5>
-                    <p class="card-text">Calculate loan payments, interest rates, and create amortization schedules.</p>
-                    <a href="#" data-route="/calculators/456/loancalculator" class="btn btn-sm btn-primary">
-                        Open Calculator
-                    </a>
-                </div>
+        
+        <div id="calculationsContainer">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> Loading your calculation history...
             </div>
         </div>
+    </section>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="calculator-card card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="display-5 mb-3">🏠</div>
-                    <h5 class="card-title">Emergency Fund Calculator</h5>
-                    <p class="card-text">Determine how much you need to save for financial emergencies.</p>
-                    <a href="#" data-route="/calculators/789/emergencyfundcalculator" class="btn btn-sm btn-primary">
-                        Open Calculator
-                    </a>
-                </div>
+    <hr class="my-5">
+
+    <!-- Saved Scenarios Section -->
+    <section class="mb-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="mb-0">Saved Scenarios</h2>
+            </div>
+            <div class="col-auto">
+                <a href="#" class="link-primary text-decoration-none">View All</a>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="calculator-card card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <div class="display-5 mb-3">💳</div>
-                    <h5 class="card-title">Debt Payoff Calculator</h5>
-                    <p class="card-text">Create a strategic plan to pay off your debts efficiently.</p>
-                    <a href="#" data-route="/calculators/101/debtpayoffcalculator" class="btn btn-sm btn-primary">
-                        Open Calculator
-                    </a>
-                </div>
+        
+        <div id="scenariosContainer">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> Loading your saved scenarios...
             </div>
         </div>
-    </div>
-
-    <div class="recent-calculations mt-5">
-        <h3 class="mb-4">Recent Calculations</h3>
-        <div class="alert alert-info">
-            Log in to view your saved calculation history
-        </div>
-    </div>
+    </section>
 </div>

@@ -15,6 +15,9 @@ import * as indexPage from './pages/index/index.js';
 import * as dashboardPage from './pages/dashboard/dashboard.js';
 import * as loginPage from './pages/login/index.js';
 import * as registerPage from './pages/register/index.js';
+import * as calculationDetailPage from './pages/calculation-detail/index.js';
+import * as scenarioDetailPage from './pages/scenario-detail/index.js';
+import * as notFoundPage from './pages/not-found/index.js';
 
 /**
  * Initialize the application
@@ -68,6 +71,13 @@ function registerRoutes() {
     // Authentication pages
     router.register('/login', loginPage);
     router.register('/register', registerPage);
+
+    // Dynamic routes for calculations and scenarios
+    router.register('/calculations/:id', calculationDetailPage);
+    router.register('/scenarios/:id', scenarioDetailPage);
+
+    // Set 404 Not Found page
+    router.setNotFound(notFoundPage);
 
     // TODO: Add additional route pages
     // router.register('/login', loginPage);

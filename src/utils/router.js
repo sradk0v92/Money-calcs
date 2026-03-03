@@ -5,12 +5,24 @@
 class Router {
   constructor() {
     this.routes = new Map();
+    this.dynamicRoutes = [];
     this.currentPage = null;
     this.isInitialized = false;
+    this.notFoundComponent = null;
   }
 
   register(path, component) {
-    this.routes.set(path, component);
+    if (path.includes(':')) {
+      // Dynamic route with parameter
+      this.dynamicRoutes.push({ pattern: path, component });
+    } else {
+      // Static route
+      this.routes.set(path, component);
+    }
+  }
+
+  setNotFound(component) {
+    this.notFoundComponent = component;
   }
 
   init() {
@@ -34,17 +46,44 @@ class Router {
     this.navigate(window.location.pathname, { pushState: false });
   }
 
+  findDynamicRoute(path) {
+    for (const { pattern, component } of this.dynamicRoutes) {
+      const patternRegex = new RegExp('^' + pattern.replace(/:[^\s/]+/g, '[^/]+') + '$');
+      if (patternRegex.test(path)) {
+        return { component, pattern };
+      }
+    }
+    return null;
+  }
+
   async navigate(path, options = {}) {
     const { pushState = true } = options;
 
     // Normalize path
     if (!path.startsWith('/')) path = '/' + path;
 
-    const route = this.routes.get(path);
+    let route = this.routes.get(path);
     
+    // Check for dynamic routes if static route not found
     if (!route) {
-      console.warn(`Route not found: ${path}`);
-      return;
+      const dynamicMatch = this.findDynamicRoute(path);
+      if (dynamicMatch) {
+        route = dynamicMatch.component;
+      }
+    }
+
+    // Show 404 if route not found
+    if (!route) {
+      if (this.notFoundComponent) {
+        if (pushState && window.location.pathname !== path) {
+          window.history.pushState(null, '', path);
+        }
+        await this.renderPage(this.notFoundComponent);
+        return;
+      } else {
+        console.warn(`Route not found: ${path}`);
+        return;
+      }
     }
 
     // Update browser history

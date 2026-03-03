@@ -1,0 +1,64 @@
+/* Calculation Detail Page Styles */
+
+#calculationContent {
+    background-color: #fff;
+    border-radius: 0.375rem;
+    padding: 2rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.calculation-inputs,
+.calculation-results {
+    margin-bottom: 2rem;
+}
+
+.calculation-inputs h5,
+.calculation-results h5 {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.calculation-input-row,
+.calculation-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.calculation-input-row:last-child,
+.calculation-result-row:last-child {
+    border-bottom: none;
+}
+
+.calculation-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.calculation-value {
+    font-family: monospace;
+    color: #212529;
+    font-weight: 500;
+}
+
+.calculation-meta {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 2rem;
+}
+
+.calculation-meta small {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    #calculationContent {
+        padding: 1rem;
+    }
+}

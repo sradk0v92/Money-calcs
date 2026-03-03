@@ -1,0 +1,60 @@
+/* Scenario Detail Page Styles */
+
+#scenarioContent {
+    background-color: #fff;
+    border-radius: 0.375rem;
+    padding: 2rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.scenario-inputs {
+    margin-bottom: 2rem;
+}
+
+.scenario-inputs h5 {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.scenario-input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.scenario-input-row:last-child {
+    border-bottom: none;
+}
+
+.scenario-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.scenario-value {
+    font-family: monospace;
+    color: #212529;
+    font-weight: 500;
+}
+
+.scenario-meta {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 2rem;
+}
+
+.scenario-meta small {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    #scenarioContent {
+        padding: 1rem;
+    }
+}
