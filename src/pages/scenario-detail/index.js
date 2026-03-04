@@ -16,6 +16,7 @@ import {
 } from '../../utils/calculationPresentation.js';
 import { fetchScenario, fetchCalculation, deleteScenario, updateScenario } from '../../utils/database.js';
 import { renderComparisonChart, destroyComparisonChart } from '../../charts/renderComparisonChart.js';
+import { exportElementAsPdf } from '../../utils/pdfExport.js';
 
 export const title = 'Saved Comparison';
 
@@ -375,6 +376,24 @@ export async function init() {
           if (titleEl) titleEl.textContent = newTitle.trim();
           alert('Title updated successfully!');
         }
+      }
+    });
+  }
+
+  const downloadPdfBtn = document.getElementById('downloadComparisonPdfBtn');
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', async () => {
+      downloadPdfBtn.disabled = true;
+
+      const titleEl = document.getElementById('comparisonTitle');
+      const fileTitle = titleEl?.textContent?.trim() || 'saved-comparison';
+      const captureElement = document.getElementById('scenarioDetailPdfContent');
+
+      const { error } = await exportElementAsPdf(captureElement, fileTitle);
+      downloadPdfBtn.disabled = false;
+
+      if (error) {
+        alert(`Failed to export PDF: ${error}`);
       }
     });
   }

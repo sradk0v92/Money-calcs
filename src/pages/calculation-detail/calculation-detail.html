@@ -1,4 +1,4 @@
-<div class="container py-5">
+<div id="calculationDetailPdfContent" class="container py-5">
     <div class="row mb-5">
         <div class="col">
             <a href="/dashboard" data-route="/dashboard" class="link-primary text-decoration-none mb-3 d-inline-block">
@@ -23,9 +23,14 @@
                     <h6 class="mb-0">Actions</h6>
                 </div>
                 <div class="card-body">
-                    <button id="editTitleBtn" class="btn btn-outline-primary w-100 mb-2">
-                      <span>✏️ Edit Title</span>
-                    </button>
+                                        <div class="d-flex gap-2 mb-2">
+                                                <button id="editTitleBtn" class="btn btn-outline-primary w-100">
+                                                    <span>✏️ Edit Title</span>
+                                                </button>
+                                                <button id="downloadCalculationPdfBtn" class="btn btn-outline-primary w-100">
+                                                    <span>📄 Download as PDF</span>
+                                                </button>
+                                        </div>
                     <a href="/dashboard" data-route="/dashboard" class="btn btn-outline-secondary w-100">Back to Dashboard</a>
                 </div>
             </div>

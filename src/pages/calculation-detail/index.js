@@ -13,6 +13,7 @@ import {
   summaryEntries,
 } from '../../utils/calculationPresentation.js';
 import { fetchCalculation, updateCalculationTitle } from '../../utils/database.js';
+import { exportElementAsPdf } from '../../utils/pdfExport.js';
 
 export const title = 'Calculation Details';
 
@@ -98,6 +99,24 @@ export async function init() {
           if (titleEl) titleEl.textContent = newTitle.trim();
           alert('Title updated successfully!');
         }
+      }
+    });
+  }
+
+  const downloadPdfBtn = document.getElementById('downloadCalculationPdfBtn');
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', async () => {
+      downloadPdfBtn.disabled = true;
+
+      const titleEl = document.getElementById('calculationTitle');
+      const fileTitle = titleEl?.textContent?.trim() || 'calculation-details';
+      const captureElement = document.getElementById('calculationDetailPdfContent');
+
+      const { error } = await exportElementAsPdf(captureElement, fileTitle);
+      downloadPdfBtn.disabled = false;
+
+      if (error) {
+        alert(`Failed to export PDF: ${error}`);
       }
     });
   }
