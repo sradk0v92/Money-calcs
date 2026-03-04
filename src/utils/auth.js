@@ -6,17 +6,40 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const missingEnvMessage = 'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env';
+const env = import.meta.env ?? {};
+const supabaseUrl = (env.VITE_SUPABASE_URL || '').trim();
+const supabaseKey = (env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY || '').trim();
 
-const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+const missingEnvMessage = 'Missing Supabase environment variables. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY), then redeploy.';
+const invalidEnvMessage = 'Invalid Supabase configuration. Ensure VITE_SUPABASE_URL is your project URL and the key is a valid Supabase publishable/anon key.';
+
+function isValidSupabaseUrl(url) {
+  return /^https:\/\/[\w-]+\.supabase\.co$/i.test(url);
+}
+
+function isLikelySupabaseKey(key) {
+  return key.startsWith('sb_publishable_') || key.startsWith('eyJ');
+}
+
+const hasEnvValues = Boolean(supabaseUrl && supabaseKey);
+const hasValidEnv = hasEnvValues && isValidSupabaseUrl(supabaseUrl) && isLikelySupabaseKey(supabaseKey);
+
+const supabase = hasValidEnv
+  ? createClient(supabaseUrl, supabaseKey)
   : null;
+
+function mapSupabaseError(message = '') {
+  if (/invalid api key/i.test(message)) {
+    return 'Supabase rejected the API key. Verify VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY) in Netlify and redeploy.';
+  }
+
+  return message;
+}
 
 function ensureSupabaseClient() {
   if (!supabase) {
-    return { error: missingEnvMessage };
+    const error = hasEnvValues ? invalidEnvMessage : missingEnvMessage;
+    return { error };
   }
   return { error: null };
 }
@@ -48,7 +71,7 @@ export async function register(email, password, userData = {}) {
     });
 
     if (authError) {
-      return { user: null, error: authError.message };
+      return { user: null, error: mapSupabaseError(authError.message) };
     }
 
     // Create profile in profiles table
@@ -63,13 +86,13 @@ export async function register(email, password, userData = {}) {
         });
 
       if (profileError) {
-        return { user: authData.user, error: profileError.message };
+        return { user: authData.user, error: mapSupabaseError(profileError.message) };
       }
     }
 
     return { user: authData.user, error: null };
   } catch (error) {
-    return { user: null, error: error.message };
+    return { user: null, error: mapSupabaseError(error.message) };
   }
 }
 
@@ -92,12 +115,12 @@ export async function login(email, password) {
     });
 
     if (error) {
-      return { user: null, error: error.message };
+      return { user: null, error: mapSupabaseError(error.message) };
     }
 
     return { user: data.user, error: null };
   } catch (error) {
-    return { user: null, error: error.message };
+    return { user: null, error: mapSupabaseError(error.message) };
   }
 }
 
@@ -114,11 +137,11 @@ export async function logout() {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      return { error: error.message };
+      return { error: mapSupabaseError(error.message) };
     }
     return { error: null };
   } catch (error) {
-    return { error: error.message };
+    return { error: mapSupabaseError(error.message) };
   }
 }
 

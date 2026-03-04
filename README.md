@@ -93,8 +93,12 @@ Create a `.env` (or `.env.local`) file for environment-specific settings:
 
 ```
 VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_or_publishable_key
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+# Optional fallback for legacy projects
+# VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+For Netlify deploys, add the same `VITE_*` variables in **Site configuration → Environment variables** and trigger a new deploy after saving.
 
 ## Architecture
 
