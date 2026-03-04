@@ -46,9 +46,9 @@ Creates the `calculations` table to store calculation history.
 - `idx_calculations_created_at` - For chronological queries
 
 ### 4. `004_create_scenarios_table.sql`
-Creates the `scenarios` table for saved calculation scenarios.
+Creates the `scenarios` table for saved calculation scenarios (initially for templates).
 
-**Table: scenarios**
+**Table: scenarios (initial schema)**
 - `id` (UUID, PK) - Unique scenario identifier
 - `user_id` (UUID, FK) - References auth.users.id
 - `calculator_type_id` (UUID, FK) - References calculator_types.id
@@ -61,6 +61,8 @@ Creates the `scenarios` table for saved calculation scenarios.
 - `idx_scenarios_user_id` - For fast user scenario lookups
 - `idx_scenarios_calculator_type_id` - For calculator type filtering
 - `idx_scenarios_created_at` - For chronological queries
+
+**Note:** This table is later repurposed in migration 009 to store comparisons instead of templates.
 
 ### 5. `005_enable_rls_and_create_policies.sql`
 Enables Row Level Security (RLS) and creates security policies.
@@ -105,11 +107,34 @@ Adds/refreshes RLS update policy for `calculations`.
 ### 8. `008_remove_calculations_update_policy.sql`
 Removes calculations `UPDATE` policy to disable editing saved calculation records.
 
-#### Scenarios Table
-- **SELECT**: Users see their own, admins see all
-- **INSERT**: Any authenticated user can create
-- **UPDATE**: Users can update their own, admins can update all
-- **DELETE**: Users can delete their own, admins can delete all
+**Removed policy:**
+- Users can no longer update their own calculations
+- Prevents editing of calculation titles/summaries after save
+
+### 9. `009_repurpose_scenarios_as_comparisons.sql`
+Transforms the `scenarios` table from storing "calculation templates" to storing "calculation comparisons".
+
+**Changes to scenarios table:**
+- **Dropped column:** `inputs` (no longer needed for comparisons)
+- **Added columns:**
+  - `left_calculation_id` (UUID, FK) - References calculations(id) ON DELETE CASCADE
+  - `right_calculation_id` (UUID, FK) - References calculations(id) ON DELETE CASCADE
+
+**New indexes:**
+- `idx_scenarios_left_calculation_id` - For fast left calculation lookups
+- `idx_scenarios_right_calculation_id` - For fast right calculation lookups
+
+**New scenarios schema (post-migration):**
+- `id` (UUID, PK) - Unique comparison identifier
+- `user_id` (UUID, FK) - User who created the comparison
+- `calculator_type_id` (UUID, FK) - Type of calculator being compared
+- `title` (text) - Friendly name for the comparison
+- `left_calculation_id` (UUID, FK) - First calculation in comparison
+- `right_calculation_id` (UUID, FK) - Second calculation in comparison
+- `created_at` (timestamp) - When the comparison was saved
+- `updated_at` (timestamp) - When the comparison was last updated
+
+**Purpose:** Enables users to save comparisons between two calculations for later reference.
 
 ## Application Flow
 

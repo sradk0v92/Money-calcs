@@ -2,9 +2,9 @@
   <!-- Back link -->
   <div class="row mb-4">
     <div class="col">
-      <a href="/dashboard" data-route="/dashboard" class="link-primary text-decoration-none d-inline-block mb-2">&larr; Back to Dashboard</a>
-      <h1 class="mb-1" id="pageTitle">Saved Comparison</h1>
-      <p class="text-muted mb-0" id="comparisonTitle">Previously saved comparison between two calculations.</p>
+      <a href="/history" data-route="/history" class="link-primary text-decoration-none d-inline-block mb-2">&larr; Back to history</a>
+      <h1 class="mb-1" id="pageTitle">Comparing Calculations</h1>
+      <p class="text-muted mb-0">Side-by-side comparison of two calculations.</p>
     </div>
   </div>
 
@@ -86,10 +86,14 @@
       </div>
     </div>
 
-    <!-- Delete comparison button -->
+    <!-- Save comparison button -->
     <div class="row mb-4">
       <div class="col">
-        <button id="deleteComparisonBtn" class="btn btn-danger">Delete comparison</button>
+        <button id="saveComparisonBtn" class="btn btn-primary">
+          <span class="spinner-border spinner-border-sm d-none me-2" id="saveBtnSpinner" role="status" aria-hidden="true"></span>
+          Save comparison
+        </button>
+        <div id="saveToastContainer" style="position: absolute; top: 20px; right: 20px; z-index: 1050;"></div>
       </div>
     </div>
   </div>

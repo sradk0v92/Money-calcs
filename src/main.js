@@ -22,6 +22,7 @@ import * as emergencyFundCalculatorPage from './pages/EmergencyFundCalculatorPag
 import * as loanCalculatorPage from './pages/LoanCalculatorPage.js';
 import * as calculationDetailPage from './pages/calculation-detail/index.js';
 import * as scenarioDetailPage from './pages/scenario-detail/index.js';
+import * as comparePage from './pages/compare/index.js';
 import * as notFoundPage from './pages/not-found/index.js';
 
 /**
@@ -86,6 +87,7 @@ function registerRoutes() {
     // Dynamic routes for calculations and scenarios
     router.register('/calculations/:id', calculationDetailPage);
     router.register('/scenarios/:id', scenarioDetailPage);
+    router.register('/compare/:id1/:id2', comparePage);
 
     // Set 404 Not Found page
     router.setNotFound(notFoundPage);

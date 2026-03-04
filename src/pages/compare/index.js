@@ -1,10 +1,9 @@
 /**
- * Scenario Detail Page - View saved comparisons
- * Scenarios table now stores saved comparisons between two calculations
+ * Compare Page - Side-by-side comparison of two calculations
  */
 
-import scenarioDetailHTML from './scenario-detail.html?raw';
-import './scenario-detail.css';
+import compareHTML from './compare.html?raw';
+import './compare.css';
 import { isAuthenticated, getCurrentUser } from '../../utils/auth.js';
 import {
   calculatorLabelMaps,
@@ -14,17 +13,18 @@ import {
   formatPercent,
   summaryEntries,
 } from '../../utils/calculationPresentation.js';
-import { fetchScenario, fetchCalculation, deleteScenario } from '../../utils/database.js';
+import { fetchComparisonPair, saveComparison } from '../../utils/database.js';
 import { renderComparisonChart, destroyComparisonChart } from '../../charts/renderComparisonChart.js';
 
-export const title = 'Saved Comparison';
+export const title = 'Compare Calculations';
 
 /**
- * Extract scenario ID from URL path
+ * Extract calculation IDs from URL path (e.g. /compare/id1/id2)
  */
-function getScenarioIdFromPath() {
-  const pathParts = window.location.pathname.split('/');
-  return pathParts[pathParts.length - 1];
+function extractIdsFromPath(path) {
+  const match = path.match(/^\/compare\/([^/]+)\/([^/]+)$/);
+  if (!match) return { id1: null, id2: null };
+  return { id1: match[1], id2: match[2] };
 }
 
 /**
@@ -153,6 +153,7 @@ function extractChartValues(arrayData, valueKey) {
   if (!Array.isArray(arrayData)) return [];
   return arrayData.map((item) => {
     if (typeof item === 'object' && item !== null) {
+      // Find the numeric value in the object (e.g., 'balance', 'contribution')
       const value = item[valueKey] || Object.values(item).find((v) => typeof v === 'number');
       return value || 0;
     }
@@ -163,7 +164,7 @@ function extractChartValues(arrayData, valueKey) {
 /**
  * Render the comparison
  */
-async function renderComparison(scenario, calc1, calc2) {
+async function renderComparison(calc1, calc2) {
   const errorContainer = document.getElementById('errorContainer');
   const contentDiv = document.getElementById('comparisonContent');
 
@@ -173,10 +174,13 @@ async function renderComparison(scenario, calc1, calc2) {
     return;
   }
 
+  if (calc1.calculator_type_id !== calc2.calculator_type_id) {
+    errorContainer.innerHTML = '<div class="alert alert-warning">Please select two calculations from the same calculator.</div>';
+    return;
+  }
+
   // Show content
   contentDiv.style.display = 'block';
-  document.getElementById('comparisonTitle').textContent = scenario.title;
-  
   const calcType = calc1.calculator_types?.slug || 'unknown';
   const labelMap = calculatorLabelMaps[calcType.replace(/-/g, '_')] || {};
 
@@ -296,6 +300,25 @@ async function renderComparison(scenario, calc1, calc2) {
   }
 }
 
+/**
+ * Show a toast notification
+ */
+function showToast(message, type = 'success') {
+  const container = document.getElementById('saveToastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.style.cssText = 'padding: 1rem; margin: 0; min-width: 300px;';
+  toast.innerHTML = `<div>${message}</div>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+/**
+ * Render the page
+ */
 export async function render() {
   if (!(await isAuthenticated())) {
     window.history.pushState(null, '', '/login');
@@ -303,63 +326,64 @@ export async function render() {
     return '';
   }
 
-  return scenarioDetailHTML;
+  return compareHTML;
 }
 
+/**
+ * Initialize the page
+ */
 export async function init() {
   const { user } = await getCurrentUser();
   if (!user) return;
 
-  const scenarioId = getScenarioIdFromPath();
-  if (!scenarioId) {
-    document.getElementById('errorContainer').innerHTML = '<div class="alert alert-danger">Scenario ID not found.</div>';
-    return;
-  }
+  // Extract IDs from URL
+  const path = window.location.pathname;
+  const { id1, id2 } = extractIdsFromPath(path);
 
-  // Fetch scenario
-  const { scenario, error: scenarioError } = await fetchScenario(scenarioId);
-
-  if (scenarioError || !scenario) {
-    document.getElementById('errorContainer').innerHTML = '<div class="alert alert-danger">Failed to load comparison.</div>';
+  if (!id1 || !id2) {
+    document.getElementById('errorContainer').innerHTML = '<div class="alert alert-danger">Invalid comparison URL.</div>';
     return;
   }
 
   // Fetch both calculations
-  const [calc1Result, calc2Result] = await Promise.all([
-    fetchCalculation(scenario.left_calculation_id),
-    fetchCalculation(scenario.right_calculation_id),
-  ]);
+  const { calc1, calc2, error } = await fetchComparisonPair(id1, id2);
 
-  if (calc1Result.error || calc2Result.error) {
-    document.getElementById('errorContainer').innerHTML = '<div class="alert alert-danger">Failed to load calculations.</div>';
+  if (error) {
+    document.getElementById('errorContainer').innerHTML = `<div class="alert alert-danger">Error loading calculations: ${error}</div>`;
     return;
   }
 
   // Render comparison
-  await renderComparison(scenario, calc1Result.calculation, calc2Result.calculation);
+  await renderComparison(calc1, calc2);
 
-  // Setup delete button
-  const deleteBtn = document.getElementById('deleteComparisonBtn');
-  if (deleteBtn) {
-    deleteBtn.addEventListener('click', async () => {
-      if (confirm('Delete this saved comparison? This action cannot be undone.')) {
-        const { error } = await deleteScenario(scenarioId);
-        if (error) {
-          alert(`Failed to delete comparison: ${error}`);
-        } else {
-          alert('Comparison deleted successfully!');
-          window.history.pushState(null, '', '/dashboard');
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        }
+  // Setup save comparison button
+  const saveBtn = document.getElementById('saveComparisonBtn');
+  if (saveBtn && calc1 && calc2) {
+    saveBtn.addEventListener('click', async () => {
+      saveBtn.disabled = true;
+      const spinner = document.getElementById('saveBtnSpinner');
+      spinner?.classList.remove('d-none');
+
+      const title = `Compare: ${calc1.title || formatDate(calc1.created_at)} vs ${calc2.title || formatDate(calc2.created_at)}`;
+      const { comparison, error: saveError } = await saveComparison(
+        user.id,
+        calc1.calculator_type_id,
+        title,
+        calc1.id,
+        calc2.id
+      );
+
+      if (saveError) {
+        showToast(`Failed to save comparison: ${saveError}`, 'error');
+      } else {
+        showToast('Comparison saved successfully!', 'success');
       }
+
+      saveBtn.disabled = false;
+      spinner?.classList.add('d-none');
     });
   }
 
   // Cleanup on page unload
   window.addEventListener('beforeunload', destroyComparisonChart);
 }
-
-export async function unmount() {
-  destroyComparisonChart();
-}
-

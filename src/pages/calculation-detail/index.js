@@ -12,7 +12,7 @@ import {
   renderKeyValueList,
   summaryEntries,
 } from '../../utils/calculationPresentation.js';
-import { createScenario, fetchCalculation } from '../../utils/database.js';
+import { fetchCalculation } from '../../utils/database.js';
 
 export const title = 'Calculation Details';
 
@@ -77,16 +77,6 @@ export async function init() {
   }
 
   await displayCalculation(calculationId, user.id);
-
-  const saveBtn = document.getElementById('saveScenarioBtn');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', async () => {
-      const scenarioTitle = prompt('Enter scenario name:', 'My Scenario');
-      if (scenarioTitle) {
-        await handleSaveAsScenario(calculationId, user.id, scenarioTitle);
-      }
-    });
-  }
 }
 
 export async function unmount() {
@@ -370,30 +360,6 @@ function renderBreakdownChart(chartConfig) {
       },
     },
   });
-}
-
-async function handleSaveAsScenario(calculationId, userId, scenarioTitle) {
-  const { calculation } = await fetchCalculation(calculationId);
-
-  if (!calculation) {
-    alert('Failed to save scenario');
-    return;
-  }
-
-  const { scenario, error } = await createScenario(
-    userId,
-    calculation.calculator_type_id,
-    scenarioTitle,
-    calculation.inputs,
-  );
-
-  if (error) {
-    alert(`Failed to save scenario: ${error}`);
-  } else {
-    alert('Scenario saved successfully!');
-    window.history.pushState(null, '', `/scenarios/${scenario.id}`);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }
 }
 
 function showError(message) {

@@ -203,7 +203,7 @@ export async function deleteCalculation(calculationId) {
 }
 
 /**
- * Fetch user's scenarios
+ * Fetch user's scenarios (now primarily for comparisons)
  * @param {string} userId - User ID
  * @param {number} limit - Number of results to fetch (default 5)
  * @returns {Promise<{scenarios, error}>}
@@ -216,7 +216,8 @@ export async function fetchUserScenarios(userId, limit = 5) {
         id,
         title,
         calculator_type_id,
-        inputs,
+        left_calculation_id,
+        right_calculation_id,
         created_at,
         updated_at,
         calculator_types(name, slug)
@@ -236,7 +237,7 @@ export async function fetchUserScenarios(userId, limit = 5) {
 }
 
 /**
- * Fetch a single scenario by ID
+ * Fetch a single scenario by ID (with full comparison details)
  * @param {string} scenarioId - Scenario ID
  * @returns {Promise<{scenario, error}>}
  */
@@ -248,7 +249,8 @@ export async function fetchScenario(scenarioId) {
         id,
         title,
         calculator_type_id,
-        inputs,
+        left_calculation_id,
+        right_calculation_id,
         created_at,
         updated_at,
         calculator_types(name, slug)
@@ -344,5 +346,72 @@ export async function deleteScenario(scenarioId) {
     return { error: null };
   } catch (error) {
     return { error: error.message };
+  }
+}
+/**
+ * Save a new comparison (as a scenario)
+ * @param {string} userId - User ID
+ * @param {string} calculatorTypeId - Calculator type ID
+ * @param {string} title - Comparison title
+ * @param {string} leftCalculationId - First calculation ID
+ * @param {string} rightCalculationId - Second calculation ID
+ * @returns {Promise<{comparison, error}>}
+ */
+export async function saveComparison(userId, calculatorTypeId, title, leftCalculationId, rightCalculationId) {
+  try {
+    const { data, error } = await supabase
+      .from('scenarios')
+      .insert({
+        user_id: userId,
+        calculator_type_id: calculatorTypeId,
+        title,
+        left_calculation_id: leftCalculationId,
+        right_calculation_id: rightCalculationId,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return { comparison: null, error: error.message };
+    }
+
+    return { comparison: data, error: null };
+  } catch (error) {
+    return { comparison: null, error: error.message };
+  }
+}
+
+/**
+ * Fetch both calculations for a comparison (helper for compare page)
+ * @param {string} id1 - First calculation ID
+ * @param {string} id2 - Second calculation ID
+ * @returns {Promise<{calc1, calc2, error}>}
+ */
+export async function fetchComparisonPair(id1, id2) {
+  try {
+    const [calc1Result, calc2Result] = await Promise.all([
+      fetchCalculation(id1),
+      fetchCalculation(id2),
+    ]);
+
+    if (calc1Result.error || calc2Result.error) {
+      return {
+        calc1: null,
+        calc2: null,
+        error: calc1Result.error || calc2Result.error,
+      };
+    }
+
+    return {
+      calc1: calc1Result.calculation,
+      calc2: calc2Result.calculation,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      calc1: null,
+      calc2: null,
+      error: error.message,
+    };
   }
 }

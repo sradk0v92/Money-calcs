@@ -188,7 +188,7 @@ async function renderScenarios(userId) {
   if (!scenarios || scenarios.length === 0) {
     container.innerHTML = `
       <div class="alert alert-info">
-        <i class="bi bi-info-circle me-2"></i> You haven't saved any scenarios yet. Perform a calculation and save it as a scenario!
+        <i class="bi bi-info-circle me-2"></i> You haven't saved any comparisons yet. Go to calculation history to compare two calculations!
       </div>
     `;
     return;
@@ -211,7 +211,7 @@ async function renderScenarios(userId) {
           </div>
           <div class="col-auto">
             <a href="/scenarios/${scenario.id}" data-route="/scenarios/${scenario.id}" class="btn btn-sm btn-outline-primary">
-              View Scenario
+              View Comparison
             </a>
           </div>
         </div>
