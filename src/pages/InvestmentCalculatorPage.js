@@ -170,6 +170,14 @@ async function setupCalculator(container) {
   const saveButton = container.querySelector('#saveCalculationBtn');
   const saveHint = container.querySelector('#saveCalculationHint');
 
+  // Guard: verify all required elements exist before proceeding
+  if (!initialAmountInput || !monthlyContributionInput || !annualReturnRateInput || !yearsInput || 
+      !contributionTimingInput || !inflationEnabledInput || !inflationRateInput || !inflationRateWrap || 
+      !saveButton || !saveHint) {
+    console.warn('Investment calculator: Required form elements not found');
+    return;
+  }
+
   const { user } = await getCurrentUser();
   let calculatorTypeId = null;
 

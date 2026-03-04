@@ -194,6 +194,13 @@ async function setupLoanCalculator(container) {
   const saveButton = container.querySelector('#saveLoanCalculationBtn');
   const saveHint = container.querySelector('#saveLoanHint');
 
+  // Guard: verify all required elements exist before proceeding
+  if (!loanAmountInput || !annualInterestRateInput || !loanTermYearsInput || !startDateInput || 
+      !extraMonthlyPaymentInput || !saveButton || !saveHint) {
+    console.warn('Loan calculator: Required form elements not found');
+    return;
+  }
+
   const { user } = await getCurrentUser();
   let calculatorTypeId = null;
 

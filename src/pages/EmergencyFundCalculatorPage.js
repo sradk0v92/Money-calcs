@@ -167,6 +167,13 @@ async function setupEmergencyCalculator(container) {
   const saveButton = container.querySelector('#saveEmergencyCalculationBtn');
   const saveHint = container.querySelector('#saveEmergencyHint');
 
+  // Guard: verify all required elements exist before proceeding
+  if (!monthlyEssentialExpensesInput || !targetMonthsInput || !currentSavingsInput || !monthlyContributionInput || 
+      !bufferPercentInput || !incomeStabilityInput || !targetMonthsSuggestion || !saveButton || !saveHint) {
+    console.warn('Emergency calculator: Required form elements not found');
+    return;
+  }
+
   const { user } = await getCurrentUser();
   let calculatorTypeId = null;
 
