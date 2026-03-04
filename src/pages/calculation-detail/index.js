@@ -12,7 +12,7 @@ import {
   renderKeyValueList,
   summaryEntries,
 } from '../../utils/calculationPresentation.js';
-import { fetchCalculation } from '../../utils/database.js';
+import { fetchCalculation, updateCalculationTitle } from '../../utils/database.js';
 
 export const title = 'Calculation Details';
 
@@ -77,6 +77,30 @@ export async function init() {
   }
 
   await displayCalculation(calculationId, user.id);
+
+  // Setup edit button
+  const editBtn = document.getElementById('editTitleBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', async () => {
+      const titleEl = document.getElementById('calculationTitle');
+      const currentTitle = titleEl?.textContent || 'Untitled calculation';
+      const newTitle = prompt('Enter new calculation title:', currentTitle);
+
+      if (newTitle && newTitle.trim() && newTitle !== currentTitle) {
+        editBtn.disabled = true;
+        const { error } = await updateCalculationTitle(calculationId, newTitle.trim());
+        editBtn.disabled = false;
+
+        if (error) {
+          alert(`Failed to update title: ${error}`);
+        } else {
+          // Update the title in the UI
+          if (titleEl) titleEl.textContent = newTitle.trim();
+          alert('Title updated successfully!');
+        }
+      }
+    });
+  }
 }
 
 export async function unmount() {
@@ -122,7 +146,7 @@ async function displayCalculation(calculationId, userId) {
       <div class="card-body">
         <h5 class="mb-1">${calculatorName}</h5>
         <div class="text-muted small">${formatDate(calculation.created_at)}</div>
-        <div class="mt-1">${escapeHtml(calculation.title || 'Untitled calculation')}</div>
+        <div id="calculationTitle" class="mt-1">${escapeHtml(calculation.title || 'Untitled calculation')}</div>
         ${summaryHtml}
       </div>
     </div>

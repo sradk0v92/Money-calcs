@@ -203,6 +203,34 @@ export async function deleteCalculation(calculationId) {
 }
 
 /**
+ * Update calculation title
+ * @param {string} calculationId - Calculation ID
+ * @param {string} title - New title
+ * @returns {Promise<{calculation, error}>}
+ */
+export async function updateCalculationTitle(calculationId, title) {
+  try {
+    const { data, error } = await supabase
+      .from('calculations')
+      .update({
+        title: title || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', calculationId)
+      .select()
+      .single();
+
+    if (error) {
+      return { calculation: null, error: error.message };
+    }
+
+    return { calculation: data, error: null };
+  } catch (error) {
+    return { calculation: null, error: error.message };
+  }
+}
+
+/**
  * Fetch user's scenarios (now primarily for comparisons)
  * @param {string} userId - User ID
  * @param {number} limit - Number of results to fetch (default 5)

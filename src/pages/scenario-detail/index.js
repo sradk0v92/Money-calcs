@@ -14,7 +14,7 @@ import {
   formatPercent,
   summaryEntries,
 } from '../../utils/calculationPresentation.js';
-import { fetchScenario, fetchCalculation, deleteScenario } from '../../utils/database.js';
+import { fetchScenario, fetchCalculation, deleteScenario, updateScenario } from '../../utils/database.js';
 import { renderComparisonChart, destroyComparisonChart } from '../../charts/renderComparisonChart.js';
 
 export const title = 'Saved Comparison';
@@ -350,6 +350,30 @@ export async function init() {
           alert('Comparison deleted successfully!');
           window.history.pushState(null, '', '/dashboard');
           window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      }
+    });
+  }
+
+  // Setup edit button
+  const editBtn = document.getElementById('editComparisonTitleBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', async () => {
+      const titleEl = document.getElementById('comparisonTitle');
+      const currentTitle = titleEl?.textContent || scenario.title;
+      const newTitle = prompt('Enter new comparison title:', currentTitle);
+
+      if (newTitle && newTitle.trim() && newTitle !== currentTitle) {
+        editBtn.disabled = true;
+        const { error } = await updateScenario(scenarioId, { title: newTitle.trim() });
+        editBtn.disabled = false;
+
+        if (error) {
+          alert(`Failed to update title: ${error}`);
+        } else {
+          // Update the title in the UI
+          if (titleEl) titleEl.textContent = newTitle.trim();
+          alert('Title updated successfully!');
         }
       }
     });
